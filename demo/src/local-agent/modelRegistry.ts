@@ -149,7 +149,7 @@ const GEMMA_TERMS: LocalModelLicense = {
 const OPENRAIL_M_LICENSE: LocalModelLicense = {
   spdxId: null,
   name: 'OpenRAIL-M License',
-  url: 'https://hf-proxy.doublethew.workers.dev/',
+  url: 'https://huggingface.co/Supertone/supertonic-2/blob/75e6727618a02f323c720cba9478152d4bc16ca4/LICENSE',
   requiresAcceptance: false,
 };
 
