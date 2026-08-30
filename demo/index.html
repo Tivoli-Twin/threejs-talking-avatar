@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="th">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#030509" />
     <meta
       name="description"
-      content="AI Avatar ผู้ช่วยอัจฉริยะที่สามารถสนทนาและพูดภาษาไทยได้"
+      content="An open Three.js talking-avatar demo powered by Google GNM, local WebGPU models, browser speech, and native facial articulation."
     />
-    <title>AI Avatar ผู้ช่วยอัจฉริยะ</title>
+    <title>GNM + Three.js Talking Avatar</title>
   </head>
   <body data-model="loading" data-speech="idle">
     <main id="app">
@@ -21,7 +21,7 @@
         <a class="wordmark" href="#speech-studio" aria-label="GNM + Three.js Talking Avatar home">
           <span class="wordmark-mark" aria-hidden="true">G∕00</span>
           <span class="wordmark-copy">
-            <strong>AI Assistant</strong>
+            <strong>GNM + Three.js</strong>
             <small>Talking Avatar</small>
           </span>
         </a>
@@ -56,10 +56,10 @@
 
         <div class="studio-heading">
           <p class="section-number">02 / LIVE AVATAR</p>
-          <h1 id="studio-title">ผู้ช่วย AI ของคุณ</h1>
+          <h1 id="studio-title">Meet your local talking avatar.</h1>
           <p>
-            พิมพ์คำถามของคุณ แล้วให้ AI คิดคำตอบและพูดตอบกลับผ่าน Avatar
-            โดยการประมวลผลส่วนใหญ่ทำงานภายใน Browser
+            Speak naturally and watch a local agent listen, think, answer, and articulate in real
+            time. Choose a brain and voice below—the full conversation runs in your browser.
           </p>
         </div>
 
@@ -71,11 +71,11 @@
 
           <div class="conversation-actions">
             <button id="talk-button" class="primary-button talk-button" type="button">
-              <span>โหลด AI และเริ่มใช้งาน</span>
+              <span>Load models + start demo</span>
               <span class="talk-glyph" aria-hidden="true">◉</span>
             </button>
             <button id="conversation-stop-button" class="square-button conversation-stop-button" type="button" disabled>
-              <span>หยุดไมโครโฟน</span><i aria-hidden="true">■</i>
+              <span>Mic stopped</span><i aria-hidden="true">■</i>
             </button>
           </div>
 
@@ -364,9 +364,7 @@
               id="phrase-input"
               maxlength="1000"
               rows="4"
-              lang="th"
               spellcheck="true"
-              placeholder="พิมพ์คำถามของคุณ..."
             >The important thing is not to stop questioning. Curiosity has its own reason for existing.</textarea>
             <div class="field-meta">
               <span>⌘ / Ctrl + Enter to speak</span>
@@ -376,7 +374,7 @@
 
           <div class="primary-actions">
             <button id="speak-button" class="primary-button" type="button">
-              <span>ส่งคำถาม</span>
+              <span>Add API key to generate</span>
               <span aria-hidden="true">▶</span>
             </button>
             <button id="stop-button" class="square-button" type="button" disabled aria-label="Stop speech">
