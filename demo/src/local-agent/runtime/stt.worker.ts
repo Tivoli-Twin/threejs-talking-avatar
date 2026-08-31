@@ -1,7 +1,5 @@
 import { env, pipeline } from '@huggingface/transformers';
-
 import type { SpeechToTextModelId } from '../modelRegistry';
-
 import { ONNX_WASM_BASE_URL } from './RuntimeAssetUrls';
 
 import {
@@ -39,7 +37,7 @@ const MODEL_REPOSITORIES: Record<SpeechToTextModelId, string> = {
 };
 
 env.remoteHost = HF_PROXY;
-env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
+env.remotePathTemplate = '{model}/resolve/{revision}';
 
 if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = ONNX_WASM_BASE_URL;
