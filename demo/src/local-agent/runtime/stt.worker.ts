@@ -1,13 +1,8 @@
 import { env, pipeline } from '@huggingface/transformers';
 import type { SpeechToTextModelId } from '../modelRegistry';
 import { ONNX_WASM_BASE_URL } from './RuntimeAssetUrls';
-import {
-  normalizeDownloadProgress,
-  postWorkerError,
-  postWorkerProgress,
-  postWorkerResult,
-  type RpcWorkerRequest,
-} from './workerProtocol';
+
+const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev/';
 
 interface LoadPayload {
   modelId: SpeechToTextModelId;
@@ -32,6 +27,9 @@ const MODEL_REPOSITORIES: Record<SpeechToTextModelId, string> = {
   'moonshine-tiny-q8': 'onnx-community/moonshine-tiny-ONNX',
   'whisper-tiny-en-q8': 'onnx-community/whisper-tiny.en',
 };
+
+env.remoteHost = HF_PROXY;
+env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
 if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = ONNX_WASM_BASE_URL;
