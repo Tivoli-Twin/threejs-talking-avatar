@@ -46,7 +46,7 @@ env.allowLocalModels = false;
 env.allowRemoteModels = true;
 env.useBrowserCache = true;
 
-env.remoteHost = 'https://hf-proxy.doublethew.workers.dev';
+
 
 
 
