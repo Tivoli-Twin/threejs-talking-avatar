@@ -11,8 +11,6 @@ import {
   type RpcWorkerRequest,
 } from './workerProtocol';
 
-const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev';
-
 interface LoadPayload {
   modelId: TextToSpeechModelId;
 }
@@ -24,13 +22,6 @@ interface SynthesizePayload {
 }
 
 env.wasmPaths = ONNX_WASM_BASE_URL;
-
-env.remoteHost = HF_PROXY;
-env.remotePathTemplate = '{model}/resolve/{revision}';
-
-env.allowLocalModels = false;
-env.allowRemoteModels = true;
-env.useBrowserCache = true;
 
 let tts: KokoroTTS | null = null;
 let loadedModel: TextToSpeechModelId | null = null;
