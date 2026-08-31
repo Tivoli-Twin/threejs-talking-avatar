@@ -45,7 +45,7 @@ interface NumericTensorLike {
 
 const MODEL_REPOSITORY = 'onnx-community/Kokoro-82M-v1.0-ONNX-timestamped';
 const VOICE_REPOSITORY =
-  'https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/voices';
+  'https://hf-proxy.doublethew.workers.dev/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/voices';
 const STYLE_DIMENSION = 256;
 const MAX_CONTENT_TOKENS = 509;
 const DEFAULT_VOICE = 'am_michael';
@@ -53,7 +53,12 @@ const DEFAULT_VOICE = 'am_michael';
 if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = ONNX_WASM_BASE_URL;
 }
+
+env.remoteHost = 'https://hf-proxy.doublethew.workers.dev';
+env.remotePathTemplate = '{model}/resolve/{revision}';
+
 env.allowLocalModels = false;
+env.allowRemoteModels = true;
 env.useBrowserCache = true;
 
 let model: CallableModel | null = null;
