@@ -18,11 +18,14 @@ const MODEL_CACHE = 'litertlm-models-v1';
 const GEMMA_E2B_REVISION = '9262660a1676eed6d0c477ab1a86344430854664';
 const GEMMA_E4B_REVISION = 'f7ad3343bd6ebc9607f4dc3bc4f2398bd5749bc5';
 
+const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev';
+
 const LITERT_MODEL_URLS: Partial<Record<LanguageModelId, string>> = {
   'gemma-4-e2b-it-litert-web':
-    `https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/${GEMMA_E2B_REVISION}/gemma-4-E2B-it-web.litertlm`,
+    `${HF_PROXY}/litert-community/gemma-4-E2B-it-litert-lm/resolve/${GEMMA_E2B_REVISION}/gemma-4-E2B-it-web.litertlm`,
+
   'gemma-4-e4b-it-litert-web':
-    `https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/${GEMMA_E4B_REVISION}/gemma-4-E4B-it-web.litertlm`,
+    `${HF_PROXY}/litert-community/gemma-4-E4B-it-litert-lm/resolve/${GEMMA_E4B_REVISION}/gemma-4-E4B-it-web.litertlm`,
 };
 
 interface ModelStreamResult {
