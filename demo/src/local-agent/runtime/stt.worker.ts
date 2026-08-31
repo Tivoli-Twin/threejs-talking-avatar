@@ -3,7 +3,15 @@ import type { SpeechToTextModelId } from '../modelRegistry';
 import { ONNX_WASM_BASE_URL } from './RuntimeAssetUrls';
 
 const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev/';
-
+import {
+  normalizeDownloadProgress,
+  postWorkerError,
+  postWorkerProgress,
+  postWorkerResult,
+  postWorkerRequest,
+  type RpcWorkerRequest,
+} from './workerProtocal';
+  
 interface LoadPayload {
   modelId: SpeechToTextModelId;
 }
