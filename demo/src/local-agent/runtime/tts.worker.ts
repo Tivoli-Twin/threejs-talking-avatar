@@ -1,5 +1,9 @@
 import { env as transformersEnv } from '@huggingface/transformers';
-import { KokoroTTS, TextSplitterStream } from 'kokoro-js';
+import {
+  env as kokoroEnv,
+  KokoroTTS,
+  TextSplitterStream,
+} from 'kokoro-js';
 
 import { normalizeSpokenText } from '../SpokenTextNormalizer';
 import type { TextToSpeechModelId } from '../modelRegistry';
@@ -17,13 +21,6 @@ const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev';
 
 kokoroEnv.wasmPaths = ONNX_WASM_BASE_URL;
 
-transformersEnv.remoteHost = HF_PROXY;
-transformersEnv.remotePathTemplate = '{model}/resolve/{revision}';
-
-transformersEnv.allowLocalModels = false;
-transformersEnv.allowRemoteModels = true;
-transformersEnv.useBrowserCache = true;
-
 interface LoadPayload {
   modelId: TextToSpeechModelId;
 }
@@ -34,7 +31,16 @@ interface SynthesizePayload {
   speed: number;
 }
 
-env.wasmPaths = ONNX_WASM_BASE_URL;
+// Kokoro/ONNX WASM files
+kokoroEnv.wasmPaths = ONNX_WASM_BASE_URL;
+
+// Hugging Face model files
+transformersEnv.remoteHost = HF_PROXY;
+transformersEnv.remotePathTemplate = '{model}/resolve/{revision}';
+
+transformersEnv.allowLocalModels = false;
+transformersEnv.allowRemoteModels = true;
+transformersEnv.useBrowserCache = true;
 
 let tts: KokoroTTS | null = null;
 let loadedModel: TextToSpeechModelId | null = null;
