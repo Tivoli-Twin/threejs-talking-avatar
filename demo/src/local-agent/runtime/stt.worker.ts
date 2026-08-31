@@ -38,8 +38,6 @@ const MODEL_REPOSITORIES: Record<SpeechToTextModelId, string> = {
   'whisper-tiny-en-q8': 'onnx-community/whisper-tiny.en',
 };
 
-const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev/';
-
 env.remoteHost = HF_PROXY;
 env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
