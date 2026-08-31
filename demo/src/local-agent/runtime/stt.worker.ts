@@ -37,7 +37,12 @@ if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = ONNX_WASM_BASE_URL;
 }
 env.allowLocalModels = false;
+env.allowRemoteModels = true;
 env.useBrowserCache = true;
+
+env.remoteHost = 'https://hf-proxy.doublethew.workers.dev';
+
+env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
 let transcriber: AsrPipeline | null = null;
 let loadedModel: SpeechToTextModelId | null = null;
