@@ -53,7 +53,6 @@ const DEFAULT_VOICE = 'am_michael';
 if (env.backends.onnx.wasm) {
   env.backends.onnx.wasm.wasmPaths = ONNX_WASM_BASE_URL;
 }
-
 env.remoteHost = 'https://hf-proxy.doublethew.workers.dev';
 env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
