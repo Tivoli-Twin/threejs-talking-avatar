@@ -19,6 +19,7 @@ import {
 
 const HF_PROXY = 'https://hf-proxy.doublethew.workers.dev';
 
+// Kokoro/ONNX WASM files
 kokoroEnv.wasmPaths = ONNX_WASM_BASE_URL;
 
 interface LoadPayload {
@@ -31,12 +32,9 @@ interface SynthesizePayload {
   speed: number;
 }
 
-// Kokoro/ONNX WASM files
-kokoroEnv.wasmPaths = ONNX_WASM_BASE_URL;
-
 // Hugging Face model files
 transformersEnv.remoteHost = HF_PROXY;
-transformersEnv.remotePathTemplate = '{model}/resolve/{revision}';
+transformersEnv.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
 transformersEnv.allowLocalModels = false;
 transformersEnv.allowRemoteModels = true;
