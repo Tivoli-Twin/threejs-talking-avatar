@@ -55,7 +55,7 @@ if (env.backends.onnx.wasm) {
 }
 
 env.remoteHost = 'https://hf-proxy.doublethew.workers.dev';
-env.remotePathTemplate = '{model}/resolve/{revision}';
+env.remotePathTemplate = '{model}/resolve/{revision}/{file}';
 
 env.allowLocalModels = false;
 env.allowRemoteModels = true;
@@ -215,25 +215,124 @@ async function loadModel(id: number, payload: LoadPayload): Promise<void> {
   postWorkerResult(id, { modelId: payload.modelId, cached: false });
 }
 
-async function synthesize(id: number, payload: SynthesizePayload): Promise<void> {
+function splitClause(text: string): [string, string] {
+  const clean = text
+    .normalize('NFKC')
+    .replace(/\s+/gu, ' ')
+    .trim();
+
+  if (!clean) {
+    return ['', ''];
+  }
+
+  // พยายามตัดตรงกลางประโยค โดยให้ความสำคัญกับ
+  // punctuation / space ก่อนการตัดกลางคำ
+  const middle = Math.floor(clean.length / 2);
+
+  const breakCandidates = [
+    clean.lastIndexOf(' ', middle),
+    clean.lastIndexOf('。', middle),
+    clean.lastIndexOf('.', middle),
+    clean.lastIndexOf('!', middle),
+    clean.lastIndexOf('?', middle),
+    clean.lastIndexOf('…', middle),
+    clean.lastIndexOf('ฯ', middle),
+    clean.lastIndexOf(',', middle),
+    clean.lastIndexOf('，', middle),
+  ];
+
+  const before = Math.max(...breakCandidates);
+
+  if (before > 0) {
+    return [
+      clean.slice(0, before + 1).trim(),
+      clean.slice(before + 1).trim(),
+    ];
+  }
+
+  // ภาษาไทยอาจไม่มี space ระหว่างคำ
+  // จึง fallback มาตัดตรงกลางข้อความ
+  return [
+    clean.slice(0, middle).trim(),
+    clean.slice(middle).trim(),
+  ];
+}
+
+async function inferWithChunking(
+  text: string,
+  voice: string,
+  speed: number,
+): Promise<Array<Awaited<ReturnType<typeof infer>>>> {
+  try {
+    return [await infer(text, voice, speed)];
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : String(error);
+
+    // ถ้าไม่ใช่ 509 phoneme error ให้ส่ง error เดิมออกไป
+    if (!message.includes('phoneme symbols')) {
+      throw error;
+    }
+
+    const [left, right] = splitClause(text);
+
+    if (!left || !right || left === text || right === text) {
+      throw error;
+    }
+
+    const [leftChunks, rightChunks] = await Promise.all([
+      inferWithChunking(left, voice, speed),
+      inferWithChunking(right, voice, speed),
+    ]);
+
+    return [...leftChunks, ...rightChunks];
+  }
+}
+
+async function synthesize(
+  id: number,
+  payload: SynthesizePayload,
+): Promise<void> {
   const startedAt = performance.now();
-  const chunk = await infer(payload.text, payload.voice, payload.speed);
+
+  const chunks = await inferWithChunking(
+    payload.text,
+    payload.voice,
+    payload.speed,
+  );
+
   const elapsedMs = performance.now() - startedAt;
-  const audioDurationSeconds = chunk.audio.length / KOKORO_SAMPLE_RATE;
-  postWorkerResult(id, {
-    engine: 'kokoro-timestamped',
-    backend: loadedBackend,
-    preset: 'standard',
-    chunks: [{
-      text: chunk.text,
-      phonemes: chunk.phonemes,
-      audio: chunk.audio,
-      sampleRate: KOKORO_SAMPLE_RATE,
-    }],
-    elapsedMs,
-    audioDurationSeconds,
-    realTimeFactor: elapsedMs / Math.max(1, audioDurationSeconds * 1000),
-  }, [chunk.audio.buffer]);
+
+  const audioDurationSeconds = chunks.reduce(
+    (total, chunk) =>
+      total + chunk.audio.length / KOKORO_SAMPLE_RATE,
+    0,
+  );
+
+  const transfers: Transferable[] = chunks.map(
+    (chunk) => chunk.audio.buffer,
+  );
+
+  postWorkerResult(
+    id,
+    {
+      engine: 'kokoro-timestamped',
+      backend: loadedBackend,
+      preset: 'standard',
+      chunks: chunks.map((chunk) => ({
+        text: chunk.text,
+        phonemes: chunk.phonemes,
+        audio: chunk.audio,
+        sampleRate: KOKORO_SAMPLE_RATE,
+      })),
+      elapsedMs,
+      audioDurationSeconds,
+      realTimeFactor:
+        elapsedMs /
+        Math.max(1, audioDurationSeconds * 1000),
+    },
+    transfers,
+  );
 }
 
 async function handle(message: RpcWorkerRequest): Promise<void> {
