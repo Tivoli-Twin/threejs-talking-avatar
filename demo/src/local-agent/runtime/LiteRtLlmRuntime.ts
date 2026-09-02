@@ -244,7 +244,11 @@ export class LiteRtLlmRuntime implements LocalBrainRuntime {
       while (true) {
         const { done, value } = await reader.read();
         if (done || signal?.aborted) break;
+        
+        console.log('[Gemma RAW CHUNK]', value);
         const token = messageText(value);
+        console.log('[Gemma TEXT CHUNK]', token);
+        
         if (token) yield token;
       }
       if (!signal?.aborted) {
