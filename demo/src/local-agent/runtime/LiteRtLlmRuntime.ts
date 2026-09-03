@@ -218,7 +218,7 @@ export class LiteRtLlmRuntime implements LocalBrainRuntime {
     const conversation = await this.engine.createConversation({
       sessionConfig: {
         samplerParams: { temperature: 0.62, p: 0.9, k: 40 },
-        maxOutputTokens: 128,
+        maxOutputTokens: 64,
       },
       preface: {
         messages: [
